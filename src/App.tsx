@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useEffect } from 'react'
+import './App.scss'
 
-function App() {
+import Story from '../src/components/Story'
+import TopNavbar from '../src/components/TopNavbar'
+import { useStoryAPI } from './hooks/useStoryApi'
+
+const App: FC = () => {
+  const { getData, storyData, isLoading } = useStoryAPI()
+
+  useEffect(() => {
+    getData()
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <TopNavbar reloadData={() => getData()}></TopNavbar>
+      { isLoading
+        ? (<div style={{ display: 'flex', justifyContent: 'center' }}><p>Loading....</p></div>)
+        : (<ul className="cards">
+        {storyData.map((item, index) => {
+          return <Story user={item.user} key={index} item={item.item}>
+          </Story>
+        })}
+     </ul>) }
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
